@@ -12,7 +12,7 @@ export async function exportJson() {
 
   const payload = {
     exportedAt: new Date().toISOString(),
-    schemaVersion: 1,
+    schemaVersion: 2,
     feeding,
     diaper,
     sleep,
