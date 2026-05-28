@@ -2,7 +2,10 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
+const base = '/MaoTaotao/';
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     VitePWA({
@@ -15,10 +18,11 @@ export default defineConfig({
         theme_color: '#0F1117',
         background_color: '#0F1117',
         display: 'standalone',
-        start_url: '/',
+        start_url: base,
+        scope: base,
         icons: [
           {
-            src: '/icons/babylog.svg',
+            src: `${base}icons/babylog.svg`,
             sizes: 'any',
             type: 'image/svg+xml',
             purpose: 'any maskable'
