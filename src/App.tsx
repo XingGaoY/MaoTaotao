@@ -7,6 +7,7 @@ import {
   Mic,
   Moon,
   Plus,
+  RefreshCw,
   Save,
   Siren,
   Smile,
@@ -80,6 +81,7 @@ const labelOptions: Array<{ value: CryLabel; label: string }> = [
 ];
 
 const pieColors = ['#EA580C', '#38BDF8', '#22C55E', '#FACC15', '#A78BFA', '#FB7185', '#94A3B8'];
+const appVersion = '0.1.0';
 
 function App() {
   const [tab, setTab] = useState<Tab>('quick');
@@ -312,6 +314,38 @@ function App() {
     await refresh();
   }
 
+  async function refreshAppCode() {
+    setStatus('正在检查更新...');
+    if (!('serviceWorker' in navigator)) {
+      window.location.reload();
+      return;
+    }
+
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (!registration) {
+      window.location.reload();
+      return;
+    }
+
+    let reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (reloaded) return;
+      reloaded = true;
+      window.location.reload();
+    });
+
+    await registration.update();
+    if (registration.waiting) {
+      registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      window.setTimeout(() => {
+        if (!reloaded) window.location.reload();
+      }, 700);
+      return;
+    }
+
+    window.location.reload();
+  }
+
   const lastFeed = feeding[feeding.length - 1];
   const lastDiaper = diaper[diaper.length - 1];
   const sleepTotal = sleep.reduce((sum, item) => sum + ((item.endTs ?? Date.now()) - item.startTs), 0);
@@ -463,13 +497,25 @@ function App() {
               <p className="mt-2 text-sm leading-6 text-muted">
                 当前版本不上传记录内容。JSON 导出不含二进制附件，完整 zip 导出预留在下一阶段。
               </p>
-              <button
-                className="mt-4 inline-flex h-11 items-center gap-2 rounded-lg bg-accent px-4 text-sm font-semibold text-white"
-                onClick={() => void exportJson()}
-              >
-                <Download size={18} />
-                导出 JSON
-              </button>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <button
+                  className="inline-flex h-11 items-center gap-2 rounded-lg bg-accent px-4 text-sm font-semibold text-white"
+                  onClick={() => void exportJson()}
+                >
+                  <Download size={18} />
+                  导出 JSON
+                </button>
+                <button
+                  className="inline-flex h-11 items-center gap-2 rounded-lg border border-white/10 bg-panel2 px-4 text-sm font-semibold text-ink"
+                  onClick={() => void refreshAppCode()}
+                >
+                  <RefreshCw size={18} />
+                  刷新应用代码
+                </button>
+              </div>
+              <p className="mt-3 text-xs leading-5 text-muted">
+                版本 {appVersion}。不要删除主屏幕图标重新添加；用这里刷新代码，本机记录会留在 IndexedDB。
+              </p>
             </div>
           </section>
         )}

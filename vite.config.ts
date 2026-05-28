@@ -12,6 +12,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/babylog.svg'],
       manifest: {
+        id: base,
         name: 'BabyLog',
         short_name: 'BabyLog',
         description: 'Privacy-first baby daily log',
@@ -30,7 +31,10 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico}']
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
+        globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
+        skipWaiting: true
       }
     })
   ]
