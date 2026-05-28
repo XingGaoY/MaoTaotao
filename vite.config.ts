@@ -1,0 +1,33 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
+
+export default defineConfig({
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['icons/babylog.svg'],
+      manifest: {
+        name: 'BabyLog',
+        short_name: 'BabyLog',
+        description: 'Privacy-first baby daily log',
+        theme_color: '#0F1117',
+        background_color: '#0F1117',
+        display: 'standalone',
+        start_url: '/',
+        icons: [
+          {
+            src: '/icons/babylog.svg',
+            sizes: 'any',
+            type: 'image/svg+xml',
+            purpose: 'any maskable'
+          }
+        ]
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png,ico}']
+      }
+    })
+  ]
+});
